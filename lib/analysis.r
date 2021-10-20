@@ -3,15 +3,15 @@ library(tidyverse)
 library(lubridate)
 library(ggplot2)
 
-setwd("..")
+# setwd("..")
 
 #If importing environment, set imported to TRUE, otherwise set FALSE to generate vars
 imported = TRUE
 
 if(imported) {
-  load("data/RDataFrames.RData")
+  load("../data/RDataFrames.RData")
 } else {
-  data.raw = read.csv('data/Housing_Maintenance_Code_Violations.csv')
+  data.raw = read.csv('../data/Housing_Maintenance_Code_Violations.csv')
   
   data.raw$InspectionDate = mdy(data.raw$InspectionDate, truncated=1)
   data.raw$ApprovedDate = mdy(data.raw$ApprovedDate, truncated=1)
@@ -208,7 +208,7 @@ if(!imported) {
                  names_to = "Status",
                  values_to = "Count")
   
-  saveRDS(data.summarized2001p, "data/summary.Rda")
-  saveRDS(data.summarizedlong2001p, "data/sumlong.Rda")
-  saveRDS(data.impairment2001p, "data/impair.Rda")
+  saveRDS(data.summarized2001p, "../data/summary.Rda")
+  saveRDS(data.summarizedlong2001p, "../data/sumlong.Rda")
+  saveRDS(data.impairment2001p, "../data/impair.Rda")
 
