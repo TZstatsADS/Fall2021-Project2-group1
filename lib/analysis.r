@@ -211,6 +211,4 @@ if(!imported) {
   saveRDS(data.summarized2001p, "data/summary.Rda")
   saveRDS(data.summarizedlong2001p, "data/summarylong.Rda")
   saveRDS(data.impairment2001p, "data/impair.Rda")
-data.cleaned2001p %>%
-  group_by(Borough) %>%
-  summarize(count = n())
+
