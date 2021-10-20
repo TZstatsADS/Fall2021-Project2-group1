@@ -4,28 +4,17 @@
 
 ![screenshot](doc/figs/map.jpg)
 
-In this second project of GR5243 Applied Data Science, we develop a *Exploratory Data Analysis and Visualization* shiny app on the work of a **NYC government agency/program** of your choice using NYC open data released on the [NYC Open Data By Agency](https://opendata.cityofnewyork.us/data/) website. In particular, many agencies have adjusted their work or rolled out new programs due to COVID, your app should provide ways for a user to explore quantiative measures of how covid has impacted daily life in NYC from different prospectives. See [Project 2 Description](doc/project2_desc.md) for more details.  
+We develop a *Exploratory Data Analysis and Visualization* shiny app on the **Housing Violation Status in NYC** using NYC open data released on the [NYC Open Data By Department of Housing Preservation and Development (HPD)](https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Violations/wvxf-dwi5) website. See [Project 2 Description](doc/project2_desc.md) for more details.  
 
-The **learning goals** for this project is:
-
-- business intelligence for data science
-- data cleaning
-- data visualization
-- systems development/design life cycle
-- shiny app/shiny server
-
-*The above general statement about project 2 can be removed once you are finished with your project. It is optional.
-
-## Project Title Lorem ipsum dolor sit amet
+## Project Title The impact of COVID-19 on NYC Housing Violation
 Term: Fall 2021
 
-+ Team #
-+ **Projec title**: + Team members
-	+ team member 1
-	+ team member 2
-	+ team member 3
-	+ team member 4
-	+ team member 5
++ Team # Group 1
++ **Team members**: 
+	+ Ayati-Ghaffari, Arya
+	+ Patel, Dipesh 
+	+ Zarate, Rodrigo
+	+ Zhao, Yang
 
 + **Project summary**: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
