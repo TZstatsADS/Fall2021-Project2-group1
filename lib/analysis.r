@@ -5,11 +5,10 @@ library(ggplot2)
 
 setwd("..")
 
-#If importing environment, set imported to true, otherwise set false to generate vars
-imported = true
+#If importing environment, set imported to TRUE, otherwise set FALSE to generate vars
+imported = TRUE
 
-if(imported)
-{
+if(imported) {
   load("data/RDataFrames.RData")
 } else {
   data.raw = read.csv('data/Housing_Maintenance_Code_Violations.csv')
@@ -98,8 +97,7 @@ last2violations = last2violations %>%
   mutate(difference = actual - estimated) %>%
   mutate(percDiff = difference/estimated)
 
-if(!imported)
-{
+if(!imported) {
   # %Resolved violations per year comparison
     #Find conflicting 
     data.excludedstatus = data.2001p %>%
@@ -141,6 +139,28 @@ if(!imported)
     summarize(count = n())
   
   #Repeat above steps, but for each class of violation
+  # data.classbreakdown2001p = data.cleaned2001p %>%
+  #   group_by(iniYear, Class, ViolationStatus) %>%
+  #   summarize(count = n()) %>%
+  #   pivot_wider(names_from = ViolationStatus,
+  #               values_from = count) %>%
+  #   mutate(Total = Close+Open) %>%
+  #   mutate(percClosed = Close/Total) %>%
+  #   pivot_longer(cols = c("Close", "Open", "Total", "percClosed"),
+  #                names_to = "Stats",
+  #                values_to = "count") %>%
+  #   pivot_wider(names_from = c(Class, Stats),
+  #               values_from = count,
+  #               names_sep = "_")
+
+  data.classTimeOpen2001p = data.cleaned2001p %>%
+    filter(ViolationStatus == "Close") %>%
+    mutate(weeksOpen = as.numeric(difftime(CurrentStatusDate,
+                                           InspectionDate,
+                                           units = "weeks"))) %>%
+    group_by(iniYear, Class) %>%
+    summarise(avgMonthsOpen = mean(weeksOpen*12/52))
+  
   data.classbreakdown2001p = data.cleaned2001p %>%
     group_by(iniYear, Class, ViolationStatus) %>%
     summarize(count = n()) %>%
@@ -148,12 +168,8 @@ if(!imported)
                 values_from = count) %>%
     mutate(Total = Close+Open) %>%
     mutate(percClosed = Close/Total) %>%
-    pivot_longer(cols = c("Close", "Open", "Total", "percClosed"),
-                 names_to = "Stats",
-                 values_to = "count") %>%
-    pivot_wider(names_from = c(Class, Stats),
-                values_from = count,
-                names_sep = "_")
+    inner_join(y = data.classTimeOpen2001p,
+               by = c("iniYear", "Class"))
   
   #Bind the three results into one dataframe for ease of visualization
   data.summarized2001p = inner_join(x = data.closed2001p,
@@ -163,6 +179,38 @@ if(!imported)
                                       by = "iniYear"),
                                     by = "iniYear")
 
-  data.impairment2001p = data.cleaned2001p %>%
+  data.impTimeOpen2001p = data.cleaned2001p %>%
+    filter(ViolationStatus == "Close") %>%
+    mutate(weeksOpen = as.numeric(difftime(CurrentStatusDate,
+                                           InspectionDate,
+                                           units = "weeks"))) %>%
     group_by(iniYear, RentImpairing) %>%
-    summarize(count = n())
+    summarise(avgMonthsOpen = mean(weeksOpen*12/52))
+  
+  data.impairment2001p = data.cleaned2001p %>%
+    group_by(iniYear, RentImpairing, ViolationStatus) %>%
+    summarize(count = n()) %>%
+    pivot_wider(names_from = ViolationStatus,
+                values_from = count) %>%
+    mutate(Total = Close+Open) %>%
+    mutate(percClosed = Close/Total) %>%
+    inner_join(y = data.impTimeOpen2001p,
+               by = c("iniYear", "RentImpairing")) %>%
+    rename("Class" = "RentImpairing")
+  
+  data.summarizedlong2001p = data.closed2001p %>%
+    mutate(Class = "O") %>%
+    inner_join(y = data.timeOpen2001p,
+               by = "iniYear") %>%
+    rbind(data.classbreakdown2001p) %>%
+    rbind(data.impairment2001p) %>%
+    pivot_longer(cols = c("Close","Open"),
+                 names_to = "Status",
+                 values_to = "Count")
+  
+  saveRDS(data.summarized2001p, "data/summary.Rda")
+  saveRDS(data.summarizedlong2001p, "data/summarylong.Rda")
+  saveRDS(data.impairment2001p, "data/impair.Rda")
+data.cleaned2001p %>%
+  group_by(Borough) %>%
+  summarize(count = n())
