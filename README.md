@@ -4,8 +4,6 @@
 
 ![screenshot](doc/figs/map.jpg)
 
-We develop a *Exploratory Data Analysis and Visualization* shiny app on the **Housing Violation Status in NYC** using NYC open data released on the [NYC Open Data By Department of Housing Preservation and Development (HPD)](https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Violations/wvxf-dwi5) website. See [Project 2 Description](doc/project2_desc.md) for more details.  
-
 ## Project Title The impact of COVID-19 on NYC Housing Violation
 Term: Fall 2021
 
