@@ -4,7 +4,7 @@
 
 ![screenshot](doc/figs/map.jpg)
 
-## Project Title The impact of COVID-19 on NYC Housing Violation
+## Project Title The Impact of COVID-19 on NYC Housing Violation
 Term: Fall 2021
 
 + Team # Group 1
