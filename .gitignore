@@ -3,3 +3,11 @@ app/.DS_Store
 app/.Rhistory
 data/.DS_Store
 www/
+data/COVID-19_Daily_Counts_of_Cases__Hospitalizations__and_Deaths.csv
+data/Housing_Maintenance_Code_Complaints.csv
+app/.RDataTmp
+data/2018up.Rda
+data/summary.Rda
+data/impair.Rda
+data/RDataFrames.RData
+data/Housing_Maintenance_Code_Violations.csv

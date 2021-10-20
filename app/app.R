@@ -230,7 +230,7 @@ shinyServer <- function(input, output, session) {
     #Import CSV files with readr::read_csv() from tidyverse
     df_vl <- data.frame(read_csv("../data/Housing_Maintenance_Code_Violations.csv"))
     df_cm <- data.frame(read_csv("../data/Housing_Maintenance_Code_Complaints.csv"))
-    data.summarizedlong2001p <- readRDS("../data/summarylong.Rda")
+    data.summarizedlong2001p <- readRDS("../data/sumlong.Rda.Rda")
     covid_df = read.csv("../data/COVID-19_Daily_Counts_of_Cases__Hospitalizations__and_Deaths.csv")
     df <- load("../data/2018up.Rda")
     

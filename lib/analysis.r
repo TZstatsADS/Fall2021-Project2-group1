@@ -209,6 +209,6 @@ if(!imported) {
                  values_to = "Count")
   
   saveRDS(data.summarized2001p, "data/summary.Rda")
-  saveRDS(data.summarizedlong2001p, "data/summarylong.Rda")
+  saveRDS(data.summarizedlong2001p, "data/sumlong.Rda")
   saveRDS(data.impairment2001p, "data/impair.Rda")
 
