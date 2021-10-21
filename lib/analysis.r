@@ -208,7 +208,59 @@ if(!imported) {
                  names_to = "Status",
                  values_to = "Count")
   
-  saveRDS(data.summarized2001p, "../data/summary.Rda")
+  #saveRDS(data.summarized2001p, "../data/summary.Rda")
   saveRDS(data.summarizedlong2001p, "../data/sumlong.Rda")
-  saveRDS(data.impairment2001p, "../data/impair.Rda")
+  #saveRDS(data.impairment2001p, "../data/impair.Rda")
 
+# Data prep for the other two tabs:
+  df_vl <- data.frame(read_csv("../data/Housing_Maintenance_Code_Violations.csv"))
+  df_cm <- data.frame(read_csv("../data/Housing_Maintenance_Code_Complaints.csv"))
+  
+  #Create df1 for static plots
+  df <- df_vl %>%
+    mutate(CurrentStatusDate = mdy(CurrentStatusDate, truncated=1)) %>%
+    filter(year(CurrentStatusDate) %in% c(2018:2021)) %>% 
+    mutate(date = paste(year(CurrentStatusDate),month(CurrentStatusDate),sep="-")) %>%
+    select(date, ViolationStatus, Borough)
+    
+  saveRDS(df, file = "../data/2018up.Rda")
+  
+  # Changing type of values (dates)
+  df_vl$InspectionDate <- as.Date(df_vl$InspectionDate, format = '%m/%d/%Y')
+  df_cm$ReceivedDate <- as.Date(df_cm$ReceivedDate, format = '%m/%d/%Y')
+  
+  # Generating key Year-Month
+  Y_m_vl <- paste(strftime(df_vl$InspectionDate, "%Y"))
+  Y_m_cm <- paste(strftime(df_cm$ReceivedDate, "%Y"))
+  
+  # Combining data with key
+  df_vl <- cbind(df_vl,Y_m_vl)
+  df_cm <- cbind(df_cm,Y_m_cm)
+  
+  # Building counting tables & changing column names
+  counting.df_vl <- df_vl %>% 
+    count(Postcode, Y_m_vl) %>% 
+    group_by(Postcode)
+  
+  colnames(counting.df_vl) <- c("region","key","value")
+  
+  counting.df_cm <- df_cm %>%
+    count(Zip, Y_m_cm) %>%
+    group_by(Zip)
+  
+  colnames(counting.df_cm) <- c("region","key","value")
+  
+  # Filtering actual zipcodes
+  counting.df_vl <- filter(counting.df_vl, region > 10000 & region < 12000)
+  counting.df_cm <- filter(counting.df_cm, region > 10000 & region < 12000)
+  
+  counting.df_vl <- filter(counting.df_vl, key > 2017)
+  counting.df_cm <- filter(counting.df_cm, key > 2017)
+  
+  counting.df_vl$region <- as.character(counting.df_vl$region)
+  counting.df_cm$region <- as.character(counting.df_cm$region)
+  
+  saveRDS(counting.df_vl, "../data/countingdf_vl.Rda")
+  saveRDS(counting.df_cm, "../data/countingdf_cm.Rda")
+  
+  

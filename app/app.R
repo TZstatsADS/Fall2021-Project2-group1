@@ -36,36 +36,16 @@ if (!require("leafsync")) {
     library(leafsync)
 }
 if (!require("ggplot2")) {
-    install.packages("leafsync")
-    library(leafsync)
+    install.packages("ggplot2")
+    library(ggplot2)
 }
 if (!require("ggvis")) {
-    install.packages("leafsync")
-    library(leafsync)
+    install.packages("ggvis")
+    library(ggvis)
 }
 if (!require("shinydashboard")) {
     install.packages("shinydashboard")
-    library(leafsync)
-}
-if (!require("shiny")) {
-    install.packages("shiny")
-    library(shiny)
-}
-if (!require("leaflet")) {
-    install.packages("leaflet")
-    library(leaflet)
-}
-if (!require("leaflet.extras")) {
-    install.packages("leaflet.extras")
-    library(leaflet.extras)
-}
-if (!require("magrittr")) {
-    install.packages("magrittr")
-    library(magrittr)
-}
-if (!require("leafsync")) {
-    install.packages("leafsync")
-    library(leafsync)
+    library(shinydashboard)
 }
 if (!require("lubridate")) {
     install.packages("lubridate")
@@ -98,18 +78,6 @@ if (!require("tigris")) {
 if (!require("htmltools")) {
     install.packages("htmltools")
     library(htmltools)
-}
-if (!require("shiny")) {
-    install.packages("shiny")
-    library(shiny)
-}
-if (!require("leaflet")) {
-    install.packages("leaflet")
-    library(leaflet)
-}
-if (!require("leaflet.extras")) {
-    install.packages("leaflet.extras")
-    library(leaflet.extras)
 }
 
 # Prepare variables
@@ -194,7 +162,15 @@ ui <- navbarPage(
             ),
             tags$a(
                 href = "https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Violations/wvxf-dwi5",
-                "https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Violations/wvxf-dwi5"
+                "data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Violations", 
+            ),br(),
+            tags$a(
+                href = "https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Complaints/uwyv-629c",
+                "data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Complaints"
+            ),br(),
+            tags$a(
+                href = "https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3",
+                "data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an"
             ),
             tags$h2(
                 "Contributors"
@@ -226,61 +202,18 @@ ui <- navbarPage(
 #===============================================Shiny SERVER=====================================================
 # LOAD AND PREPARE DATA ####################################
 
-#Import CSV files with readr::read_csv() from tidyverse
-if(!exists("df_vl")) {
-    df_vl <- data.frame(read_csv("../data/Housing_Maintenance_Code_Violations.csv"))
-    df_cm <- data.frame(read_csv("../data/Housing_Maintenance_Code_Complaints.csv"))
-    data.summarizedlong2001p <- readRDS("../data/sumlong.Rda")
-    covid_df = read.csv("../data/COVID-19_Daily_Counts_of_Cases__Hospitalizations__and_Deaths.csv")
-    load("../data/2018up.Rda")
-}
+#Import data produced from analysis.r script
+counting.df_cm <- readRDS("../data/countingdf_cm.Rda")
+counting.df_vl <- readRDS("../data/countingdf_vl.Rda")
+data.summarizedlong2001p <- readRDS("../data/sumlong.Rda")
+df <- readRDS("../data/2018up.Rda")
+covid_df = read.csv("../data/COVID-19_Daily_Counts_of_Cases__Hospitalizations__and_Deaths.csv")
 
-# Changing type of values (dates)
-df_vl$InspectionDate <- as.Date(df_vl$InspectionDate, format = '%m/%d/%Y')
-df_cm$ReceivedDate <- as.Date(df_cm$ReceivedDate, format = '%m/%d/%Y')
-
-# Generating key Year-Month
-Y_m_vl <- paste(strftime(df_vl$InspectionDate, "%Y"))
-Y_m_cm <- paste(strftime(df_cm$ReceivedDate, "%Y"))
-
-# Combining data with key
-df_vl <- cbind(df_vl,Y_m_vl)
-df_cm <- cbind(df_cm,Y_m_cm)
-
-# Building counting tables & changing column names
-counting.df_vl <- df_vl %>% 
-    count(Postcode, Y_m_vl) %>% 
-    group_by(Postcode)
-
-colnames(counting.df_vl) <- c("region","key","value")
-
-counting.df_cm <- df_cm %>%
-    count(Zip, Y_m_cm) %>%
-    group_by(Zip)
-
-colnames(counting.df_cm) <- c("region","key","value")
-
-# Filtering actual zipcodes
-counting.df_vl <- filter(counting.df_vl, region > 10000 & region < 12000)
-counting.df_cm <- filter(counting.df_cm, region > 10000 & region < 12000)
-
-counting.df_vl <- filter(counting.df_vl, key > 2017)
-counting.df_cm <- filter(counting.df_cm, key > 2017)
-
-counting.df_vl$region <- as.character(counting.df_vl$region)
-counting.df_cm$region <- as.character(counting.df_cm$region)
 
 # cache zip boundaries that are downloaded via tigris package
 options(tigris_use_cache = TRUE)
 
 zcta <- zctas(starts_with = c(10, 11), year = 2010, state = "New York")
-
-
-# static plots
-
-df <- data.2018up
-
-df$date <- paste(year(df$CurrentStatusDate),month(df$CurrentStatusDate),sep="-")
 
 # covid data
 
@@ -345,6 +278,7 @@ shinyServer <- function(input, output, session) {
                       position = "bottomright")
     })
     
+    # static plots
     output$static <- renderPlot({
         ggplot(data=df) +
             geom_bar(aes(x=factor(.data[[input$db]]),fill=factor(ViolationStatus)))+
