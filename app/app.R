@@ -79,12 +79,10 @@ if (!require("htmltools")) {
     install.packages("htmltools")
     library(htmltools)
 }
-
-# Prepare variables
-# Load datasets
-#setwd("..")
-# readRDS("data/impair.Rda")
-# data.summarizedlong2001p <- readRDS("../data/summarylong.Rda")
+if (!require("rsconnect")) {
+    install.packages("rsconnect")
+    library(rsconnect)
+}
 
 #===============================================Shiny UI=========================================================
 ui <- navbarPage(
@@ -202,24 +200,22 @@ ui <- navbarPage(
 #===============================================Shiny SERVER=====================================================
 # LOAD AND PREPARE DATA ####################################
 
-#Import data produced from analysis.r script
-counting.df_cm <- readRDS("../data/countingdf_cm.Rda")
-counting.df_vl <- readRDS("../data/countingdf_vl.Rda")
-data.summarizedlong2001p <- readRDS("../data/sumlong.Rda")
-df <- readRDS("../data/2018up.Rda")
-covid_df = read.csv("../data/COVID-19_Daily_Counts_of_Cases__Hospitalizations__and_Deaths.csv")
-
-
-# cache zip boundaries that are downloaded via tigris package
-options(tigris_use_cache = TRUE)
-
-zcta <- zctas(starts_with = c(10, 11), year = 2010, state = "New York")
-
-# covid data
-
-covid_df$DATE <- as.Date(covid_df$DATE_OF_INTEREST, format = "%m/%d/%Y")
-
 shinyServer <- function(input, output, session) {
+    #Import data produced from analysis.r script
+    counting.df_cm <- readRDS("countingdf_cm.Rda")
+    counting.df_vl <- readRDS("countingdf_vl.Rda")
+    data.summarizedlong2001p <- readRDS("sumlong.Rda")
+    df <- readRDS("2018up.Rda")
+    covid_df = read.csv("COVID-19_Daily_Counts_of_Cases__Hospitalizations__and_Deaths.csv")
+    
+    # covid data
+    covid_df$DATE <- as.Date(covid_df$DATE_OF_INTEREST, format = "%m/%d/%Y")
+    
+    # cache zip boundaries that are downloaded via tigris package
+    options(tigris_use_cache = TRUE)
+    
+    zcta <- zctas(starts_with = c(10, 11), year = 2010, state = "New York")
+    
     issue <- reactive({
         if (input$issue == "violations") {
             return(filter(counting.df_vl, key == input$iyear))
